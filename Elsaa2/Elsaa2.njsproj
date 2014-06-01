@@ -44,7 +44,6 @@
     <Compile Include="public\javascripts\select2.js" />
     <Compile Include="public\javascripts\underscore-min.js" />
     <Compile Include="routes\index.js" />
-    <Compile Include="routes\user.js" />
     <Content Include="package.json" />
     <Content Include="public\images\analytics.png" />
     <Content Include="public\images\classes.png" />
@@ -57,6 +56,20 @@
     <Content Include="public\ssl\localhost.crt" />
     <Content Include="public\ssl\localhost.csr" />
     <Content Include="public\ssl\localhost.key" />
+    <Content Include="public\stylesheets\admin\index.css" />
+    <Content Include="public\stylesheets\admin\login.css" />
+    <Content Include="public\stylesheets\admin\permissions.css" />
+    <Content Include="public\stylesheets\admin\roles.css" />
+    <Content Include="public\stylesheets\admin\users.css" />
+    <Content Include="public\stylesheets\bootstrap-modal-bs3patch.css" />
+    <Content Include="public\stylesheets\bootstrap-modal.css" />
+    <Content Include="public\stylesheets\main\index.css" />
+    <Content Include="public\stylesheets\main\login.css" />
+    <Content Include="public\stylesheets\select2-bootstrap.css" />
+    <Content Include="public\stylesheets\select2-spinner.gif" />
+    <Content Include="public\stylesheets\select2.css" />
+    <Content Include="public\stylesheets\select2.png" />
+    <Content Include="public\stylesheets\select2x2.png" />
     <Content Include="public\stylesheets\style.styl" />
     <Content Include="public\subs\.dont_delete" />
     <Content Include="public\videos\.dont_delete" />
@@ -75,6 +88,8 @@
     <Folder Include="public\javascripts\main\" />
     <Folder Include="public\ssl\" />
     <Folder Include="public\stylesheets\" />
+    <Folder Include="public\stylesheets\admin\" />
+    <Folder Include="public\stylesheets\main\" />
     <Folder Include="public\subs\" />
     <Folder Include="public\videos\" />
     <Folder Include="routes\" />
