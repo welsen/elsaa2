@@ -1,17 +1,35 @@
 ﻿{
-  "name": "Elsaa2",
-  "version": "0.0.0",
-  "description": "Elsaa2",
-  "main": "app.js",
+  "name": "elsaa2",
+  "description": "ELSAA2",
+  "version": "2.0.0",
+  "scripts": {
+    "preinstall": "nodemon",
+    "start": "nodemon --ignore public/ app"
+  },
   "author": {
-    "name": "Dávid",
-    "email": ""
+    "name": "David Onofer",
+    "email": "david.onofer@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/welsen/elsaa2"
+  },
+  "bugs": {
+    "url": "https://github.com/welsen/elsaa2/issues"
   },
   "dependencies": {
     "express": "3.4.4",
     "jade": "*",
     "stylus": "*",
     "mongodb": "*",
-    "mongoose": "*"
+    "mongoose": "*",
+    "vid-streamer": "*",
+    "socket.io": "*",
+    "ldapjs": "*",
+    "nodemailer": "*",
+    "crypto-js": "*",
+    "log4js": "*",
+    "underscore": "*",
+    "connect-mongo": "*"
   }
 }

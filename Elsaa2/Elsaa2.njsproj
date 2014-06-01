@@ -31,11 +31,39 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Compile Include="public\javascripts\admin\index.js" />
+    <Compile Include="public\javascripts\admin\login.js" />
+    <Compile Include="public\javascripts\admin\permissions.js" />
+    <Compile Include="public\javascripts\admin\roles.js" />
+    <Compile Include="public\javascripts\admin\users.js" />
+    <Compile Include="public\javascripts\bootstrap-modal.js" />
+    <Compile Include="public\javascripts\bootstrap-modalmanager.js" />
+    <Compile Include="public\javascripts\common.js" />
+    <Compile Include="public\javascripts\main\index.js" />
+    <Compile Include="public\javascripts\main\login.js" />
+    <Compile Include="public\javascripts\select2.js" />
+    <Compile Include="public\javascripts\underscore-min.js" />
     <Compile Include="routes\index.js" />
     <Compile Include="routes\user.js" />
     <Content Include="package.json" />
+    <Content Include="public\images\analytics.png" />
+    <Content Include="public\images\classes.png" />
+    <Content Include="public\images\courses.png" />
+    <Content Include="public\images\permissions.png" />
+    <Content Include="public\images\reports.png" />
+    <Content Include="public\images\roles.png" />
+    <Content Include="public\images\someicon.png" />
+    <Content Include="public\images\users.png" />
+    <Content Include="public\ssl\localhost.crt" />
+    <Content Include="public\ssl\localhost.csr" />
+    <Content Include="public\ssl\localhost.key" />
     <Content Include="public\stylesheets\style.styl" />
+    <Content Include="public\subs\.dont_delete" />
+    <Content Include="public\videos\.dont_delete" />
     <Content Include="README.md" />
+    <Content Include="ssl\localhost.crt" />
+    <Content Include="ssl\localhost.csr" />
+    <Content Include="ssl\localhost.key" />
     <Content Include="views\index.jade" />
     <Content Include="views\layout.jade" />
   </ItemGroup>
@@ -43,8 +71,14 @@
     <Folder Include="public\" />
     <Folder Include="public\images\" />
     <Folder Include="public\javascripts\" />
+    <Folder Include="public\javascripts\admin\" />
+    <Folder Include="public\javascripts\main\" />
+    <Folder Include="public\ssl\" />
     <Folder Include="public\stylesheets\" />
+    <Folder Include="public\subs\" />
+    <Folder Include="public\videos\" />
     <Folder Include="routes\" />
+    <Folder Include="ssl\" />
     <Folder Include="views\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
