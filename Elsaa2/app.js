@@ -276,9 +276,22 @@ function initDatabase() {
 function startElsaa() {
     logger.info("Starting ELSAA...");
     global.acl = new Acl(global.db);
-    global.acl.ACL.allow('guest', 'index', ['view', 'login']);
-    global.acl.ACL.addUserRoles('test1', 'guest');
-    global.acl.DB.collection('acl_meta').find({ 'key': 'roles' }).toArray(function (err, docs) { console.log(docs.length); });
+
+    global.acl.AddRole('testrole1', 'this is a testrole #1 no parent', null, false, function () {
+        console.log('done...');
+        global.acl.AddRole('testrole2', 'this is a testrole 2# with parent', "538c67d2d514fa3005585af0", false, function () {
+            global.acl.GetRolesUnder("538c67d2d514fa3005585af0", function (rows) {
+                console.log(rows);
+            });
+        });
+        // global.acl.UpdateRole("538c57f4c8832778230af17d", "This is a test-role with no parent: 1#", function () {
+        //     console.log('done...');
+        //     // global.acl.DeleteRole("538c57f4c8832778230af17d", function () {
+        //     //     console.log('done...');
+        //     // });
+        // });
+    });
+
     console.log("Elsaa Started");
 }
 

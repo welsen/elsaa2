@@ -23,6 +23,7 @@
     "stylus": "*",
     "mongodb": "*",
     "mongoose": "*",
+    "mongoose-tree": "*",
     "vid-streamer": "*",
     "socket.io": "*",
     "ldapjs": "*",
@@ -30,7 +31,6 @@
     "crypto-js": "*",
     "log4js": "*",
     "underscore": "*",
-    "connect-mongo": "*",
-    "acl": "*"
+    "connect-mongo": "*"
   }
 }

@@ -1,115 +1,113 @@
 var md5 = require("crypto-js/md5");
 var logger = global.log4js.getLogger('elsaa');
 var us = require('underscore');
-var acl = require('acl');
+var mongoose = require('mongoose');
+var tree = require('mongoose-tree');
+
+mongoose.connect('mongodb://localhost:27017/elsaa');
+
+var Schema = mongoose.Schema;
+var ObjectId = Schema.ObjectId;
+
+var AclRoleSchema = new Schema({
+    name: { type: String, unique: true },
+    description: String,
+    created: Number,
+    modified: Number,
+    deletable: Boolean,
+    active: Boolean
+});
+AclRoleSchema.plugin(tree);
+var AclRole = mongoose.model('AclRole', AclRoleSchema);
+
+var AclPermissionSchema = new Schema({
+    name: { type: String, unique: true },
+    description: String,
+    created: Number,
+    modified: Number,
+    deletable: Boolean,
+    active: Boolean
+});
+AclPermissionSchema.plugin(tree);
+var AclPermission = mongoose.model('AclPermission', AclPermissionSchema);
 
 var Acl = (function () {
     'use strict';
 
     function Acl(db) {
         this.DB = db;
-        this.ACL = new acl(new acl.mongodbBackend(this.DB, "acl_"));
         this.Auth = {};
         this.__ROLE = {};
-        var self = this;
     }
 
     Acl.prototype.AddRole = function (name, desc, parent, deletable, callback) {
-        var self = this;
         var now = (new Date()).getTime();
 
-        self.DB.run("INSERT INTO ACL_ROLES(NAME, DESCRIPTION, PARENT, CREATED, MODIFIED, DELETABLE, ACTIVE) VALUES(:name, :desc, :parent, :now, :now, :deletable, 1)", {
-            ':name': name,
-            ':desc': desc,
-            ':parent': parent,
-            ':deletable': deletable,
-            ':now': now
-        }, function (error) {
-            if (error == null) {
-                callback();
-            } else {
-                self.DB.run("UPDATE ACL_ROLES SET DESCRIPTION=:desc, MODIFIED=:now, DELETABLE=:deletable, PARENT=:parent, ACTIVE=1 WHERE NAME=:name", {
-                    ':name': name,
-                    ':desc': desc,
-                    ':parent': parent,
-                    ':deletable': deletable,
-                    ':now': now
-                }, function (error) {
-                    if (error == null) {
-                        callback();
-                    } else {
-                        logger.error(error);
+        var role = new AclRole({            
+            name: name,
+            description: desc,
+            created: now,
+            modified: now,
+            deletable: deletable,
+            active: true
+        });
+        if (parent != null) {
+            AclRole.findOne({ _id: parent }, function(err, par) {
+                if (err) return;
+                role.parent = par._id;
+                role.save(function(err) {
+                    if (!err) callback();
+                    else {
+                        AclRole.findOneAndUpdate({ name: role.name }, { $set: { description: role.description, modified: role.modified } }, function (err) {
+                            if (err) logger.error(err);
+                            else callback();
+                        });
                     }
                 });
-            }
-        });
+            });
+        } else {
+            role.save(function (err) {
+                if (!err) callback();
+                else {
+                    AclRole.findOneAndUpdate({ name: role.name }, { $set: { description: role.description, modified: role.modified } }, function (err) {
+                        if (err) logger.error(err);
+                        else callback();
+                    });
+                }
+            });
+        }
     };
 
     Acl.prototype.UpdateRole = function (id, desc, callback) {
-        var self = this;
         var now = (new Date()).getTime();
 
-        self.DB.run("UPDATE ACL_ROLES SET DESCRIPTION=:desc, MODIFIED=:now WHERE ID=:id", {
-            ':id': id,
-            ':desc': desc,
-            ':now': now
-        }, function (error) {
-            if (error == null) {
-                callback();
-            } else {
-                logger.error(error);
-            }
+        AclRole.findOneAndUpdate({ _id: id }, { $set: { description: desc, modified: now } }, function (err) {
+            if (err) logger.error(err);
+            else callback();
         });
     };
 
     Acl.prototype.DeleteRole = function (id, callback) {
-        var self = this;
-        var now = (new Date()).getTime();
-
-        self.DB.run("UPDATE ACL_ROLES SET ACTIVE=0, MODIFIED=:now WHERE ID=:id AND DELETABLE=1", {
-            ':id': id,
-            ':now': now
-        }, function (error) {
-            if (error == null) {
-                if (this.changes != 0) {
-                    self.DB.run("UPDATE ACL_ROLES SET PARENT=0, MODIFIED=:now WHERE PARENT=:id", {
-                        ':id': id,
-                        ':now': now
-                    }, function (error) {
-                        if (error == null) {
-                            callback();
-                        } else {
-                            logger.error(error);
-                        }
-                    });
-                }
-            } else {
-                logger.error(error);
-            }
-        });
+        AclRole.remove({ _id: id }).exec();
+        AclRole.remove({ parent: id }).exec();
+        callback();
     };
 
     Acl.prototype.GetRolesUnder = function (id, callback) {
-        var self = this;
-
-        self.DB.all("WITH RECURSIVE\
-                UNDER_ROLE(NAME,LEVEL,DESCRIPTION,ID, PARENT) AS (\
-                    SELECT ACL_ROLES.NAME, 0 AS LEVEL, ACL_ROLES.DESCRIPTION, ACL_ROLES.ID, ACL_ROLES.PARENT\
-                        FROM ACL_ROLES\
-                        WHERE ACL_ROLES.ID = :id\
-                    UNION ALL\
-                    SELECT ACL_ROLES.NAME, UNDER_ROLE.LEVEL + 1, ACL_ROLES.DESCRIPTION, ACL_ROLES.ID, ACL_ROLES.PARENT\
-                        FROM ACL_ROLES JOIN UNDER_ROLE ON ACL_ROLES.PARENT=UNDER_ROLE.ID\
-                        WHERE ACL_ROLES.ACTIVE = 1\
-                        ORDER BY 2 DESC\
-                )\
-            SELECT ID, NAME, PARENT, DESCRIPTION FROM UNDER_ROLE;", {
-            ':id': id
-        }, function (error, rows) {
-            if (error == null) {
-                callback(rows);
-            } else {
-                logger.error(error);
+        var outRoles = [];
+        AclRole.findOne({ _id: id }, function (err, role) {
+            if (err) logger.error(err);
+            else {
+                outRoles.push(role);
+                role.getChildren(true, function (err, roles) {
+                    if (err) logger.error(err);
+                    else {
+                        roles.forEach(function (item, idx) {
+                            outRoles.push(item);
+                        });
+                        callback(outRoles);
+                    }
+                });
             }
         });
     };
