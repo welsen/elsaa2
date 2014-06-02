@@ -1,0 +1,30 @@
+extends ../layout
+
+block content
+    include header
+    .container-fluid
+        .row
+            .col-sm-3.col-md-2.sidebar
+                include sidebar
+            .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+                h1.page-header Manage Users
+                .btn-group
+                    button.btn.btn-default(disabled=perms["Add User"] ? false : true, data-toggle='modal', data-target='#add-user') Add User
+                .table-responsive
+                    table.table.table-striped
+                        thead
+                            tr
+                                th #
+                                th Username
+                                th Full Name
+                                th Email
+                                th Type
+                                th Active
+                                th Actions
+                        tbody#userListBody
+                            // userList
+    script(type='text/javascript').
+        window['__elsaa_user_perms'] = !{JSON.stringify(perms)};
+        window['__elsaa_user_userList'] = !{JSON.stringify(userList)};
+        $('.select2').select2();
+    script(type='text/javascript', src='/javascripts/' + page + '.js')

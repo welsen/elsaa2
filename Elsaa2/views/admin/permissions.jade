@@ -1,0 +1,112 @@
+extends ../layout
+
+mixin listPermissions(permissionList)
+    each item, index in permissionList
+        - var deletable = perms["Delete Permission"] ? (item.DELETABLE==1 ? false : true) : true;
+        - var canModify = perms["Modify Permission"] ? false : true;
+        tr
+            td
+                input(type='checkbox', data-permission-id=item.ID)
+            td= ("-------".slice(0, (item.PARENT -1))) + " " + item.NAME
+            td= item.DESCRIPTION
+            td
+                .btn-group.btn-group-xs
+                    button.btn.btn-default.modify-button(disabled=canModify, data-toggle='modal', data-target='#edit-permission', data-permission-id=item.ID) Modify
+                    button.btn.btn-default.delete-button(disabled=deletable, data-toggle='modal', data-target='#del-permission',data-permission-id=item.ID) Delete
+
+block content
+    include header
+    .container-fluid
+        .row
+            .col-sm-3.col-md-2.sidebar
+                include sidebar
+            .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+                h1.page-header Manage Permissions
+                .btn-group
+                    button.btn.btn-default(disabled=perms["Add Permission"] ? false : true, data-toggle='modal', data-target='#add-permission') Add Permission
+                .table-responsive
+                    table.table.table-striped
+                        thead
+                            tr
+                                th #
+                                th Name
+                                th Description
+                                th Actions
+                        tbody#permissionListBody
+                            +listPermissions(permissionList)
+    #add-permission.modal.fade.out(tabindex='-1', data-focus-on='input:first', data-width='760')
+        .modal-header
+            button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+            h3 Add Permission
+        .modal-body
+            form.form-horizontal(role='form')
+                .form-group
+                    label.col-sm-2.control-label(for='input-permission-parent') Parent
+                    .col-sm-10
+                        select#input-permission-parent.select2.form-control(name='parent', type='text', data-tabindex='1')
+                            option(value=0) Root
+                            each item, index in permissionList
+                                option(value=item.ID)= item.NAME
+                    label.col-sm-2.control-label(for='input-permission-name') Name
+                    .col-sm-10
+                        input#input-permission-name.form-control(name='name', type='text', data-tabindex='2')
+                    label.col-sm-2.control-label(for='input-permission-description') Description
+                    .col-sm-10
+                        textarea#input-permission-description.form-control(name='description', data-tabindex='3', rows=5, style='resize: none')
+                    label.col-sm-2.control-label(for='input-permission-deletable') Deletable
+                    .col-sm-10
+                        label.checkbox
+                            input#input-permission-deletable(name='deletable', data-tabindex='4', type='checkbox', checked)
+        .modal-footer
+            button#add-permission-close-btn.btn(type='button', data-dismiss='modal') Close
+            button#add-permission-ok-btn.btn.btn-primary(type='button', data-dismiss='modal') Ok
+    #edit-permission.modal.fade.out(tabindex='-1', data-focus-on='textarea:first', data-width='760')
+        .modal-header
+            button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+            h3 Modify Permission
+        .modal-body
+            form.form-horizontal(role='form')
+                .form-group
+                    label.col-sm-2.control-label(for='input-permission-name') Name
+                    .col-sm-10
+                        input#input-permission-id(type='hidden')
+                        input#input-permission-name.form-control(name='name', type='text', disabled)
+                    label.col-sm-2.control-label(for='input-permission-description') Description
+                    .col-sm-10
+                        textarea#input-permission-description.form-control(name='description', data-tabindex='1', rows=5, style='resize: none')
+                    label.col-sm-2.control-label(for='input-permission-deletable') Deletable
+                    .col-sm-10
+                        label.checkbox
+                            input#input-permission-deletable(name='deletable', data-tabindex='2', type='checkbox', disabled)
+        .modal-footer
+            button#edit-permission-close-btn.btn(type='button', data-dismiss='modal') Close
+            button#edit-permission-ok-btn.btn.btn-primary(type='button', data-dismiss='modal') Ok
+    #del-permission.modal.fade.out(tabindex='-1', data-focus-on='textarea:first', data-width='760')
+        .modal-header
+            button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+            h3 Delete Permission
+        .modal-body
+            p.alert.alert-warning.bg-warning
+                strong Are you sure to delete this permission?
+            form.form-horizontal(role='form')
+                .form-group
+                    label.col-sm-2.control-label(for='input-permission-name') Name
+                    .col-sm-10
+                        input#input-permission-id(type='hidden')
+                        input#input-permission-name.form-control(name='name', type='text', disabled)
+                    label.col-sm-2.control-label(for='input-permission-description') Description
+                    .col-sm-10
+                        textarea#input-permission-description.form-control(name='description', data-tabindex='1', rows=5, style='resize: none', disabled)
+                    label.col-sm-2.control-label(for='input-permission-deletable') Deletable
+                    .col-sm-10
+                        label.checkbox
+                            input#input-permission-deletable(name='deletable', data-tabindex='2', type='checkbox', disabled)
+        .modal-footer
+            button#del-permission-close-btn.btn(type='button', data-dismiss='modal') Close
+            button#del-permission-ok-btn.btn.btn-primary(type='button', data-dismiss='modal') Ok
+    script(type='text/javascript').
+        window['__elsaa_user_perms'] = !{JSON.stringify(perms)};
+        window['__elsaa_user_permissions'] = !{JSON.stringify(permissions)};
+        window['__elsaa_user_permissionList'] = !{JSON.stringify(permissionList)};
+        $('.select2').select2();
+    script(type='text/javascript', src='/javascripts/' + page + '.js')

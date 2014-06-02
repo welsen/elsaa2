@@ -1,0 +1,29 @@
+mixin showDashboardForPermission(perm, image, alt, short, url)
+    if perms[perm]
+        a(href=url)
+            .col-xs-6.col-sm-3.placeholder
+                img.img-responsive(src=image, alt=alt)
+                h4= short
+                span.text-muted= alt
+
+h1.page-header Dashboard
+.row.placeholders
+    +showDashboardForPermission('Manage Roles and Permissions', 'images/permissions.png', 'Manage Permissions', 'Permission', '/admin/permissions')
+    +showDashboardForPermission('Manage Roles and Permissions', 'images/roles.png', 'Manage Roles', 'Roles', '/admin/roles')
+    +showDashboardForPermission('Manage Users', 'images/users.png', 'Manage Users', 'Users', '/admin/users')
+    +showDashboardForPermission('Manage Courses', 'images/courses.png', 'Manage Courses', 'Courses', '/admin/courses')
+    +showDashboardForPermission('Manage Classes', 'images/classes.png', 'Manage Classes', 'Classes', '/admin/classes')
+h2.sub-header My Permissions
+.table-responsive
+    table.table.table-striped
+        thead
+            tr
+                th #
+                th Name
+                th Level
+                th Description
+        tbody
+            - each perm, idx in permissions
+                tr
+                    - each value, idf in perm
+                        td= value

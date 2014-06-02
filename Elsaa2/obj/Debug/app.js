@@ -12,7 +12,7 @@ var fs = require('fs');
 var path = require('path');
 var util = require('util');
 var events = require('events');
-var mongodb = require('mongodb').MongoClient;
+var mongoose = require('mongoose');
 var md5 = require('crypto-js/md5');
 var vidStreamer = require("vid-streamer");
 
@@ -74,8 +74,6 @@ function serverLogger() {
         next();
     };
 }
-
-var Acl = require('./modules/acl').Acl;
 
 var ElsaaEventEmitter = function () {
     events.EventEmitter.call(this);
@@ -220,18 +218,19 @@ function loadDynamicModules() {
     //                 }
     //             });
     //         });
-             ElsaaEventHandler.emit('elsaa.routes.done');
+    //         ElsaaEventHandler.emit('elsaa.routes.done');
     //     } else {
     //         logger.error("Loading Modules failed...");
     //     }
     // });
 }
 
-function initWebsocket(websocketRef, server, secure) {
-    websocketRef = io.listen(server, {
+function initWebsocket(websocket, server, secure) {
+    websocket = io.listen(server, {
         secure: secure
     });
-    var chat = websocketRef.of('/chat').on('connection', function (socket) {
+    websocket.set('log level', 0);
+    chat = websocket.of('/chat').on('connection', function (socket) {
         socket.on('login', function (options, id) {
             var data = {
                 'message': 'Logged in successfully'
@@ -264,22 +263,19 @@ function initServer() {
 }
 
 function initDatabase() {
-    mongodb.connect("mongodb://localhost:27017/elsaa", function callback(err, db) {
-        if (!err) {
-            global.db = db;
-            logger.info('Connection with Database established');
-            ElsaaEventHandler.emit('elsaa.database.done');
-        }
+    mongoose.connect('mongodb://localhost/elsaa');
+    db = global.db = mongoose.connection;
+    db.on('error', console.error.bind(console, 'connection error:'));
+    db.once('open', function callback() {
+        logger.info(db.version);
+        logger.info('Connection with Database established');
+        ElsaaEventHandler.emit('elsaa.database.done');
     });
 }
 
 function startElsaa() {
     logger.info("Starting ELSAA...");
-    global.acl = new Acl(global.db);
-    global.acl.ACL.allow('guest', 'index', ['view', 'login']);
-    global.acl.ACL.addUserRoles('test1', 'guest');
-    global.acl.DB.collection('acl_meta').find({ 'key': 'roles' }).toArray(function (err, docs) { console.log(docs.length); });
-    console.log("Elsaa Started");
+    acl = global.acl;
 }
 
 init();

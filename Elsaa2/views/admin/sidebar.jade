@@ -1,0 +1,36 @@
+mixin isActive(item, subPage)
+    if item == subPage
+        li.active
+            block
+    else
+        li
+            block
+mixin hasPermission(perm)
+    if perms[perm]
+        block
+
+ul.nav.nav-sidebar
+    +isActive('dashboard', subpage)
+        a(href='/admin') Overview
+    +isActive('reports', subpage)
+        a(href='/admin/reports') Reports
+    +isActive('analytics', subpage)
+        a(href='/admin/analitics') Analytics
+    +isActive('export', subpage)
+        a(href='/admin/export') Export
+ul.nav.nav-sidebar
+    +hasPermission('Manage Roles and Permissions')
+        +isActive('permissions', subpage)
+            a(href='/admin/permissions') Manage Permissions
+    +hasPermission('Manage Roles and Permissions')
+        +isActive('roles', subpage)
+            a(href='/admin/roles') Manage Roles
+    +hasPermission('Manage Users')
+        +isActive('users', subpage)
+            a(href='/admin/users') Manage Users
+    +hasPermission('Manage Courses')
+        +isActive('courses', subpage)
+            a(href='/admin/courses') Manage Courses
+    +hasPermission('Manage Classes')
+        +isActive('classes', subpage)
+            a(href='/admin/classes') Manage Classes

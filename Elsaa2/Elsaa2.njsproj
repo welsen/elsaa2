@@ -31,6 +31,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Compile Include="modules\acl.js" />
+    <Compile Include="modules\test.js" />
     <Compile Include="public\javascripts\admin\index.js" />
     <Compile Include="public\javascripts\admin\login.js" />
     <Compile Include="public\javascripts\admin\permissions.js" />
@@ -44,6 +46,7 @@
     <Compile Include="public\javascripts\select2.js" />
     <Compile Include="public\javascripts\underscore-min.js" />
     <Compile Include="routes\index.js" />
+    <Content Include="logs\.dont-delete" />
     <Content Include="package.json" />
     <Content Include="public\images\analytics.png" />
     <Content Include="public\images\classes.png" />
@@ -81,6 +84,8 @@
     <Content Include="views\layout.jade" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="logs\" />
+    <Folder Include="modules\" />
     <Folder Include="public\" />
     <Folder Include="public\images\" />
     <Folder Include="public\javascripts\" />

@@ -30,6 +30,7 @@
     "crypto-js": "*",
     "log4js": "*",
     "underscore": "*",
-    "connect-mongo": "*"
+    "connect-mongo": "*",
+    "acl": "*"
   }
 }

@@ -1,0 +1,14 @@
+extends ../layout
+
+block content
+    .container
+        form.form-signin(role='form', method='post', action='/login/authenticate')
+            h2.form-signin-heading= locale.signInHeading
+            input.form-control(name='username', data-access='username', type='text', placeholder=locale.username, required=true, autofocus=true)
+            input.form-control(name='password', data-access='password', type='password', placeholder=locale.password, required=true, autocomplete='off')
+            label.checkbox
+                input(name='remember', data-access='remember', type='checkbox', value='remember')
+                != locale.rememberMe
+            button.btn.btn-lg.btn-primary.btn-block(type='submit')= locale.signIn
+            p.help-block!= locale.loginHelp
+    script(src='/javascripts/' + page + '.js')

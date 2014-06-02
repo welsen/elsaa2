@@ -1,0 +1,9 @@
+extends ../layout
+
+block content
+    div(style='width: 720px; height: 480px')
+        video#vplayer.video-js.vjs-default-skin(controls=true, preload='none', data-setup='{}', width='640', height='320')
+            source(src='videos/Halo4.mp4', type='video/mp4')
+            track(kind='subtitles', src='subs/Halo4.vtt', srclang='en', label='English')
+    script(src='//vjs.zencdn.net/4.2/video.js')
+    script(src='/javascripts/' + page + '.js')
